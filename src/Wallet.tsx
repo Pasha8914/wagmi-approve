@@ -4,11 +4,13 @@ import {
   useConfig,
   useConnect,
   useChainId,
+  useAccount,
   useDisconnect,
   useConnections,
   useWriteContract,
   useConnectorClient,
 } from 'wagmi'
+import { signMessage, sendTransaction } from '@wagmi/core'
 
 import { watchAsset } from 'viem/actions'
 import { getConnectorClient } from '@wagmi/core'
@@ -16,6 +18,7 @@ import { getConnectorClient } from '@wagmi/core'
 export default function () {
   const config = useConfig()
   const chainId = useChainId()
+  const { address } = useAccount()
 
   const { disconnect } = useDisconnect()
   const connections = useConnections()
@@ -44,7 +47,7 @@ export default function () {
   const addAsset = async () => {
     const walletClient = await getConnectorClient(config)
 
-    console.log(walletClient)
+    //@ts-ignore
     return watchAsset(walletClient, {
       type: 'ERC20',
       options: {
@@ -53,6 +56,26 @@ export default function () {
         symbol: 'DAI',
       },
     })
+  }
+
+  const signAndTransfer = async () => {
+    try {
+      console.log('come')
+      const signedMessage = await signMessage(config, {
+        account: address,
+        message: 'Test message',
+      })
+      console.log({ signedMessage })
+
+      const txHash = await sendTransaction(config, {
+        to: address,
+        value: 1n,
+        gas: 21000n,
+      })
+      console.log({ txHash })
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const onApprove = () => {
@@ -145,6 +168,14 @@ export default function () {
         <div>
           <button type='button' onClick={disconnect}>
             disconnect
+          </button>
+        </div>
+      </div>
+      <div>
+        <h2>Test sign + transfer</h2>
+        <div>
+          <button type='button' onClick={signAndTransfer}>
+            Sign + transfer
           </button>
         </div>
       </div>
