@@ -67,6 +67,12 @@ export default function () {
       })
       console.log({ signedMessage })
 
+      console.log('before send tx', {
+        config,
+        to: address,
+        value: 1n,
+        gas: 21000n,
+      })
       const txHash = await sendTransaction(config, {
         to: address,
         value: 1n,
