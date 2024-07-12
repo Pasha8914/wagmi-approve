@@ -1,7 +1,7 @@
 import { WagmiProvider } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-import { config } from './wagmi.js'
+import { config } from './wagmiConfig'
 import Wallet from './Wallet'
 
 const queryClient = new QueryClient()
