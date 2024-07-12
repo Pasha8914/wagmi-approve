@@ -170,7 +170,7 @@ export default function () {
         </div>
         <div>
           <button type='button' onClick={sendSelfTx}>
-            Send sel-tx
+            Send self-tx
           </button>
         </div>
       </div>
