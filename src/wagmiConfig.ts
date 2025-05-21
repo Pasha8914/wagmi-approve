@@ -1,9 +1,10 @@
-import { mainnet } from 'wagmi/chains'
+import { sepolia } from 'wagmi/chains'
 import { http, createConfig } from 'wagmi'
 import { injected, walletConnect } from 'wagmi/connectors'
+import { fallback } from 'viem'
 
 export const config = createConfig({
-  chains: [mainnet],
+  chains: [sepolia],
   connectors: [
     injected(),
     walletConnect({
@@ -12,6 +13,6 @@ export const config = createConfig({
     }),
   ],
   transports: {
-    [mainnet.id]: http(),
+    [sepolia.id]: fallback([http('https://eth-sepolia.g.alchemy.com/v2/zGyoNjj3MQRHhikvD2v7ybkFH5g4Kq_b')]),
   },
 })
