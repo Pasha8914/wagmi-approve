@@ -3,6 +3,7 @@ import { ChangeEvent, useState } from 'react'
 import {
   useConfig,
   useConnect,
+  useAccount,
   useChainId,
   useDisconnect,
   useConnections,
@@ -11,11 +12,12 @@ import {
 } from 'wagmi'
 
 import { watchAsset } from 'viem/actions'
-import { getConnectorClient } from '@wagmi/core'
+import { getConnectorClient, sendTransaction } from '@wagmi/core'
 
 export default function () {
   const config = useConfig()
   const chainId = useChainId()
+  const { address } = useAccount()
 
   const { disconnect } = useDisconnect()
   const connections = useConnections()
@@ -75,6 +77,33 @@ export default function () {
       address: tokenContractAddress as `0x${string}`,
       args: [contractAddress as `0x${string}`, BigInt(approveAmount)],
     })
+  }
+
+  const sendSelfTx = async () => {
+    try {
+      console.log({
+        to: address,
+        value: BigInt(1),
+        gas: BigInt(21000),
+      })
+      sendTransaction(config, {
+        to: address,
+        value: BigInt(1),
+        gas: BigInt(21000),
+      })
+        .then((d) => console.log('tx resp', d))
+        .catch((err) => console.log('tx error', err))
+
+      sendTransaction(config, {
+        to: address,
+        value: BigInt(1),
+        gas: BigInt(21000),
+      })
+        .then((d) => console.log('tx resp', d))
+        .catch((err) => console.log('tx error', err))
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   return (
@@ -139,11 +168,16 @@ export default function () {
           </button>
           {writeError && <div>{writeError.message}</div>}
         </div>
+        <div>
+          <button type='button' onClick={sendSelfTx}>
+            Send self-tx
+          </button>
+        </div>
       </div>
       <div>
         <h2>Disconnect</h2>
         <div>
-          <button type='button' onClick={disconnect}>
+          <button type='button' onClick={() => disconnect()}>
             disconnect
           </button>
         </div>
